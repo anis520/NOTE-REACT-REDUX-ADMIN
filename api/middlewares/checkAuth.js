@@ -22,8 +22,6 @@ const AuthCheckmiddlewrer = async (req, res, next) => {
   const me = await User.findById(Findid);
   req.me = me;
 
-  console.log(me);
-
   next();
 };
 

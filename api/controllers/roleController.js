@@ -4,11 +4,12 @@ import asynchandler from "express-async-handler";
 import { CreateSlug } from "../helpers/createSlug.js";
 
 // create a permiton
-export const createroleController = asynchandler(async (req, res) => {
+export const roleController = asynchandler(async (req, res) => {
   // get data
-  const { name } = req.body;
-
+  const { name, permissions } = req.body;
+  console.log(permissions);
   let slug = CreateSlug(name);
+  // check
   const namecheck = await Role.findOne({ name });
 
   if (namecheck) {
@@ -18,44 +19,82 @@ export const createroleController = asynchandler(async (req, res) => {
   const role = await Role.create({
     name,
     slug,
+    permissions,
   });
 
-  // check
   if (role) {
-    return res
-      .status(201)
-      .json({ message: "permiton created successful", role });
+    return res.status(201).json({ message: "Role created successful", role });
   } else {
     return res.status(400).json({ message: "Invalid role data" });
   }
 });
 
 // get all user
-export const allpermitonController = asynchandler(async (req, res) => {
+export const allroleController = asynchandler(async (req, res) => {
   // create new user data
-  const permission = await Permission.find();
+  const role = await Role.find();
 
   // check
-  if (permission) {
-    return res
-      .status(201)
-      .json({ message: "permiton created successful", permission });
+  if (role) {
+    return res.status(201).json({ message: "roles get successful", role });
   } else {
-    return res.status(400).json({ message: "Invalid permition data" });
+    return res.status(400).json({ message: "Invalid role data" });
   }
 });
 
-// get all user
-export const singlepermitonController = asynchandler(async (req, res) => {
+export const singleroleAndDeleteController = asynchandler(async (req, res) => {
   const { id } = req.params;
 
   // create new user data
-  const permission = await Permission.findById(id);
+  const role = await Role.findByIdAndDelete(id);
 
   // check
-  if (permission) {
-    return res.status(201).json({ message: "Get single permiton", permission });
+  if (role) {
+    return res.status(201).json({ message: "Delete single role", role });
   } else {
-    return res.status(400).json({ message: "Invalid permition data" });
+    return res.status(400).json({ message: "Invalid role data" });
+  }
+});
+
+// update role
+export const singleroleUpdateController = asynchandler(async (req, res) => {
+  const { id } = req.params;
+  console.log(req.body);
+  // create new user data
+  const role = await Role.findByIdAndUpdate(
+    id,
+    {
+      name: req.body.name,
+      permissions: req.body.permitions,
+    },
+    { new: true }
+  );
+
+  // check
+  if (role) {
+    return res.status(201).json({ message: "get single role", role });
+  } else {
+    return res.status(400).json({ message: "Invalid role data" });
+  }
+});
+
+// update role status
+export const roleStatusUpdate = asynchandler(async (req, res) => {
+  const { id } = req.params;
+  console.log(req.body);
+  // create new user data
+  const role = await Role.findByIdAndUpdate(
+    id,
+    {
+      status: req.body.status,
+    },
+    { new: true }
+  );
+
+  // check
+  if (role) {
+    return res.status(201).json({ message: "get single role", role });
+  } else {
+    return res.status(400).json({ message: "Invalid role data" });
   }
 });

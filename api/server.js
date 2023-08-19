@@ -9,9 +9,7 @@ import roleRoutes from "./routes/role.js";
 import cookieParser from "cookie-parser";
 import mongoDBConnect from "./config/database.js";
 import cors from "cors";
-import corsOptions from "./config/corsSetup.js";
 import { handleError } from "./utils/handleError.js";
-import path from "path";
 import { v2 as cloudinary } from "cloudinary";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
@@ -27,6 +25,10 @@ cloudinary.config({
 dotenv.config();
 
 const app = express();
+
+// socket connection
+
+//
 
 // set middlewares
 app.use(express.json());

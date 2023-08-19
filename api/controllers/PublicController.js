@@ -1,81 +1,75 @@
-import User from "../models/User.js"
+import User from "../models/User.js";
+import asynchandler from "express-async-handler";
 
- import bcrypt from 'bcrypt'
+import bcrypt from "bcrypt";
+import sendEmail, { temppasswordtemplate } from "../utils/sendemai.js";
 
+// get all users
 
+export const alluser = async (req, res, next) => {
+  try {
+    const users = await User.find().populate("role");
 
-
-// get all users 
-
-
-
- export const alluser=async(req,res,next)=>{
-
-try {
-   const user=await User.find()
-
-   res.json(user)
-   
-} catch (error) {
-   next(error) 
-}
-
-
-}     
-
-
-
-
-
-
+    res.json({
+      users,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 // create a user
- export const crateuser=async(req,res,next)=>{
- // get data
- const { username, email, password, role ,status} = req.body;
+export const crateuser = asynchandler(async (req, res) => {
+  // get data
+  const { username, email, password, role } = req.body;
 
-//  // check validation
-//  if (!name || !password || !email || !role) {
-//    return res.status(400).json({ message: "All fields are required" });
-//  }
- 
- // email existance
- const emailCheck = await User.findOne({ email });
+  // check validation
+  if (!username || !password || !email) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
 
- if (emailCheck) {
-   return res.status(400).json({ message: "Email already exists" });
- }
+  // email existance
+  const emailCheck = await User.findOne({ email });
 
- // hash password
- const hash = await bcrypt.hash(password, 10);
+  if (emailCheck) {
+    return res.status(400).json({ message: "Email already exists" });
+  }
 
- // create new user data
- const user = await User.create({ username,status, email, role, password: hash });
+  // hash password
+  const hash = await bcrypt.hash(password, 10);
 
- // check
- if (user) {
-   return res.status(201).json({ message: "User created successful", user });
- } else {
-   return res.status(400).json({ message: "Invalid user data" });
- }
-}     
+  // create new user data
+  const user = await User.create({
+    username,
+    email,
+    role,
+    password: hash,
+    status: true,
+  });
 
+  // check
+  if (user) {
+    sendEmail(
+      req.body.email,
+      "Access info",
+      temppasswordtemplate(username, email, password)
+    );
 
-// get all users 
+    return res.status(201).json({ message: "User created successful", user });
+  } else {
+    return res.status(400).json({ message: "Invalid user data" });
+  }
+});
 
+// get all users
 
+export const deleteuser = async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const user = await User.findByIdAndDelete(id);
 
- export const deleteuser=async(req,res,next)=>{
-const {id}=req.params
-try {
-   const user=await User.findByIdAndDelete(id)
-
-   res.json(user)
-   
-} catch (error) {
-   next(error)
-}
-
-
-}     
-
+    res.json(user);
+  } catch (error) {
+    next(error);
+  }
+};

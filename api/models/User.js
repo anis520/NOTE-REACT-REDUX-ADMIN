@@ -34,8 +34,8 @@ const userSchema = mongoose.Schema(
       trim: true,
     },
     role: {
-      type: String,
-      default: "Author",
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Role",
     },
     password: {
       type: String,
@@ -57,6 +57,9 @@ const userSchema = mongoose.Schema(
     },
     loggedInDevice: {
       type: Array,
+    },
+    token: {
+      type: String,
     },
   },
   {

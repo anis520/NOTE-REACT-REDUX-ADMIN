@@ -6,7 +6,7 @@ import { CreateSlug } from "../helpers/createSlug.js";
 // create a permiton
 export const permitonController = asynchandler(async (req, res) => {
   // get data
-  const { name } = req.body;
+  const { name, status } = req.body;
 
   let slug = CreateSlug(name);
   // check
@@ -19,6 +19,7 @@ export const permitonController = asynchandler(async (req, res) => {
   const permission = await Permission.create({
     name,
     slug,
+    status,
   });
 
   if (permission) {
@@ -55,6 +56,76 @@ export const singlepermitonController = asynchandler(async (req, res) => {
   // check
   if (permission) {
     return res.status(201).json({ message: "Get single permiton", permission });
+  } else {
+    return res.status(400).json({ message: "Invalid permition data" });
+  }
+});
+// delet permiton
+export const singlepermitonAndDeleteController = asynchandler(
+  async (req, res) => {
+    const { id } = req.params;
+
+    // create new user data
+    const permission = await Permission.findByIdAndDelete(id);
+
+    // check
+    if (permission) {
+      return res
+        .status(201)
+        .json({ message: "Delete single permiton", permission });
+    } else {
+      return res.status(400).json({ message: "Invalid permition data" });
+    }
+  }
+);
+// update permition
+export const permitionUpdate = asynchandler(async (req, res) => {
+  const { id } = req.params;
+  const { name } = req.body;
+
+  // create new user data
+  const permission = await Permission.findByIdAndUpdate(
+    id,
+    { name, slug: CreateSlug(name) },
+    { new: true }
+  );
+
+  // check
+  if (permission) {
+    return res.status(201).json({ message: "permiton updated", permission });
+  } else {
+    return res.status(400).json({ message: "Invalid permition data" });
+  }
+});
+// update permition status
+export const permitionStatusUpdate = asynchandler(async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  // create new user data
+  const permission = await Permission.findByIdAndUpdate(
+    id,
+    { status },
+    { new: true }
+  );
+
+  // check
+  if (permission) {
+    return res.status(201).json({ message: "permiton updated", permission });
+  } else {
+    return res.status(400).json({ message: "Invalid permition data" });
+  }
+});
+// Permiton delete
+export const permitionDeletecontroller = asynchandler(async (req, res) => {
+  const { id } = req.params;
+
+  // create new user data
+  const permission = await Permission.findByIdAndDelete(id, { new: true });
+
+  // check
+  if (permission) {
+    return res.status(201).json({ message: "permiton updated", permission });
   } else {
     return res.status(400).json({ message: "Invalid permition data" });
   }

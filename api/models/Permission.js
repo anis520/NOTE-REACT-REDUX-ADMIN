@@ -5,8 +5,9 @@ const perrmissionSchema = mongoose.Schema(
   {
     name: {
       type: String,
-      trim: true,
+
       required: true,
+      trim: true,
       unique: true,
     },
     slug: {
