@@ -1,5 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { userLogin, userLogout, userMe, userRegister } from "./authapiSlice";
+import {
+  userLogin,
+  userLogout,
+  userMe,
+  userPasRest,
+  userPasRestVerify,
+  userRegister,
+} from "./authapiSlice";
 
 //create auth slice
 const authSlice = createSlice({
@@ -74,6 +81,22 @@ const authSlice = createSlice({
     builder.addCase(userMe.rejected, (state, action) => {
       (state.loading = false), console.log(action.error.message);
       (state.error = action.error.message), (state.user = null);
+    });
+
+    // reset link
+    builder.addCase(userPasRest.fulfilled, (state, action) => {
+      state.message = action.payload.data.message;
+    });
+    builder.addCase(userPasRest.rejected, (state, action) => {
+      state.error = action.error.message;
+    });
+
+    // reset pass
+    builder.addCase(userPasRestVerify.fulfilled, (state, action) => {
+      state.message = action.payload.data.message;
+    });
+    builder.addCase(userPasRestVerify.rejected, (state, action) => {
+      state.error = action.error.message;
     });
   },
 });

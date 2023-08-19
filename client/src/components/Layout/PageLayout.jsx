@@ -12,8 +12,28 @@ import {
   MdShoppingCartCheckout,
 } from "react-icons/md";
 import Header from "../../components/Header/Header";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { useEffect } from "react";
+import {
+  GetAllpermition,
+  GetAllrole,
+  GetAllusers,
+} from "../../features/Admin/adminapiSlice";
+import { useAuthUser } from "../../hooks/useAuthUser";
 const PageLayout = () => {
+  const { user } = useAuthUser();
+  // console.log(auth.user.role);
+  const location = useLocation();
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(GetAllpermition());
+    dispatch(GetAllrole());
+    dispatch(GetAllusers());
+  }, []);
+
   return (
     <div>
       <div className="main-wrapper">
@@ -31,27 +51,42 @@ const PageLayout = () => {
                 <li className="menu-title">
                   <span>Main</span>
                 </li>
-                <li className="">
-                  <Link to="/">
-                    <MdHome className=" text-2xl" /> <span>Dashboard</span>
-                  </Link>
-                </li>
+                {user?.role?.permissions?.includes("Dashboard") &&
+                  user?.role?.status && (
+                    <li className={location.pathname == "/" && "active"}>
+                      <Link to="/">
+                        <MdHome className=" text-2xl" /> <span>Dashboard</span>
+                      </Link>
+                    </li>
+                  )}
 
-                <li className="">
-                  <Link to="/users">
-                    <MdPeople className=" text-2xl" /> <span>Users</span>
+                {user?.role?.permissions?.includes("Users") && (
+                  <li className={location.pathname == "/users" && "active"}>
+                    <Link to="/users">
+                      <MdPeople className=" text-2xl" /> <span>Users</span>
+                    </Link>
+                  </li>
+                )}
+                {user?.role?.permissions?.includes("Role") && (
+                  <li className={location.pathname == "/role" && "active"}>
+                    <Link to="/role">
+                      <MdPeople className=" text-2xl" /> <span>Role</span>
+                    </Link>
+                  </li>
+                )}
+                {user?.role?.permissions?.includes("Permition") && (
+                  <li className={location.pathname == "/permition" && "active"}>
+                    <Link to="/permition">
+                      <MdPeople className=" text-2xl" /> <span>Permition</span>
+                    </Link>
+                  </li>
+                )}
+
+                {/* <li className="">
+                  <Link to="/message">
+                    <MdPeople className=" text-2xl" /> <span>Message</span>
                   </Link>
-                </li>
-                <li className="">
-                  <Link to="/role">
-                    <MdPeople className=" text-2xl" /> <span>Role</span>
-                  </Link>
-                </li>
-                <li className="">
-                  <Link to="/permition">
-                    <MdPeople className=" text-2xl" /> <span>Permition</span>
-                  </Link>
-                </li>
+                </li> */}
               </ul>
             </div>
           </div>

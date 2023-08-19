@@ -1,7 +1,7 @@
 import logoimg from "../../assets/img/download (1).png";
 import { MdDelete, MdNotifications } from "react-icons/md";
 import useDropdownPopup from "../../hooks/DropdownPopup";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { userLogout } from "../../features/Auth/authapiSlice";
@@ -140,7 +140,6 @@ const Header = () => {
               <p className="text-zinc-700 border-b-2  px-4 py-2 font-semibold">
                 profile
               </p>
-
               <p className="p-2 flex items-center gap-3 mb-2">
                 <img
                   className="w-8  h-8 object-cover rounded-full border"
@@ -158,13 +157,15 @@ const Header = () => {
                     5 minites ago
                   </p>
                   <p className="text-xs font-semibold text-zinc-500">
-                    {user.role}
+                    {user.role.name}
                   </p>
                 </div>
-              </p>
-              <p className=" mb-2 text-sm font-semibold text-zinc-500 p-2 border hover:bg-slate-200 mx-2 rounded-md">
-                My profile
-              </p>
+              </p>{" "}
+              <Link to="/profile">
+                <p className=" mb-2 text-sm font-semibold text-zinc-500 p-2 border hover:bg-slate-200 mx-2 rounded-md">
+                  My profile
+                </p>
+              </Link>
               <p className=" mb-2 text-sm font-semibold text-zinc-500 p-2 border hover:bg-slate-200 mx-2 rounded-md">
                 Settings
               </p>

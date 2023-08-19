@@ -2,9 +2,12 @@ import "../../../admin/assets/css/style.css";
 import "../../../admin/assets/css/bootstrap.min.css";
 import logoimg from "../../assets/img/undraw_Access_account_re_8spm.png";
 import { FaFacebook, FaGoogle } from "react-icons/fa";
-import { Link, redirect } from "react-router-dom";
+import { Link, redirect, useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { userRegister } from "../../features/Auth/authapiSlice";
+import {
+  userPasRestVerify,
+  userRegister,
+} from "../../features/Auth/authapiSlice";
 import { useDispatch, useSelector } from "react-redux";
 import {
   sweelAlert,
@@ -13,13 +16,17 @@ import {
 } from "../../utils/sweetAlert";
 import { CreateTost } from "../../utils/toastifyAlert";
 import { setMessageEmpty } from "../../features/Auth/authSlice";
-const Register = () => {
+const ResetPass = () => {
+  const navagte = useNavigate();
+  const { token } = useParams();
+  console.log(token);
   const auth = useSelector((state) => state.auth);
+  console.log(auth);
   const dispatch = useDispatch();
   const [input, setinput] = useState({
-    email: "",
+    token,
     password: "",
-    name: "",
+
     confirmpasword: "",
   });
 
@@ -33,29 +40,21 @@ const Register = () => {
   const handleRegester = (e) => {
     e.preventDefault();
 
-    if (!input.name || !input.email || !input.password) {
+    if (!input.confirmpasword || !input.password) {
       // CreateTost("read");
       sweelAlertBasic("All fields are required");
     } else {
       if (input.password == input.confirmpasword) {
-        dispatch(
-          userRegister({
-            username: input.name,
-            email: input.email,
-            password: input.password,
-            status: "ture",
-            role: "User",
-          })
-        );
+        dispatch(userPasRestVerify(input));
 
         setinput({
-          email: "",
+          token: "",
           password: "",
-          name: "",
+
           confirmpasword: "",
         });
-        redirect("/login");
 
+        navagte("/login");
         // sweelAlert({ title: "Done", msg: "Regester user done" }, "success");
       } else {
         sweelAlertBasic("Confrom password not matched");
@@ -95,7 +94,7 @@ const Register = () => {
             </div>
             <div className="login-right">
               <div className="login-right-wrap">
-                <h1>Register</h1>
+                <h1>Reset password</h1>
                 <p className="account-subtitle">Access to our dashboard</p>
 
                 {/* <!-- Form --> */}
@@ -104,26 +103,6 @@ const Register = () => {
                   onKeyDown={handleenterbtn}
                   action=""
                 >
-                  <div className="form-group">
-                    <input
-                      className="form-control"
-                      type="text"
-                      placeholder="Name"
-                      name="name"
-                      value={input.name}
-                      onChange={handleInputchange}
-                    />
-                  </div>
-                  <div className="form-group">
-                    <input
-                      className="form-control"
-                      type="text"
-                      placeholder="Email"
-                      name="email"
-                      value={input.email}
-                      onChange={handleInputchange}
-                    />
-                  </div>
                   <div className="form-group">
                     <input
                       className="form-control"
@@ -184,4 +163,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default ResetPass;
